@@ -13,9 +13,9 @@
     public:
             ModbusInterface(HardwareSerial& serial, bool verbose);
       void  begin(int RS485baudrate, int RS485config);
-      bool  writeHoldingRegisterValues(int address, int startingRegisterAddress, uint8_t *data, int dataLength);
-      bool  writeHoldingRegisterValue(int address, int registerAddress, uint8_t dataByte);
-      bool  readHoldingRegisterValues(int address, int startingRegisterAddress, int nValues, uint8_t *response);
-      bool  readHoldingRegisterValue(int address, int registerAddress, uint8_t *response);
+      bool  writeHoldingRegisterValues(int address, int startingRegisterAddress, uint16_t *data, int dataLength);
+      bool  writeHoldingRegisterValue(int address, int registerAddress, uint16_t dataByte);
+      bool  readHoldingRegisterValues(int address, int startingRegisterAddress, int nValues, uint16_t *response);
+      bool  readHoldingRegisterValue(int address, int registerAddress, uint16_t *response);
   };
 #endif

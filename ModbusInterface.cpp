@@ -37,7 +37,7 @@ void ModbusInterface::begin(int RS485baudrate, int RS485config) {
 /**
   Writes Holding Register values to the server under specified address.
 */
-bool ModbusInterface::writeHoldingRegisterValues(int address, int startingRegisterAddress, uint8_t *data, int dataLength) {
+bool ModbusInterface::writeHoldingRegisterValues(int address, int startingRegisterAddress, uint16_t *data, int dataLength) {
   // Set the Holding Register values to counter
   _serial.print("Writing Holding Registers values ... ");
 
@@ -52,6 +52,18 @@ bool ModbusInterface::writeHoldingRegisterValues(int address, int startingRegist
 
   if (!ModbusRTUClient.endTransmission()) {
     _serial.print("WRITE FAILED! ");
+    _serial.print("address: ");
+    _serial.print(address);
+    _serial.print(", startingRegisterAddress: ");
+    _serial.print(startingRegisterAddress);
+    _serial.print(", dataLength: ");
+    _serial.print(dataLength);
+    _serial.print(", data: "); 
+    for (int i = 0; i < dataLength; i++) {
+      _serial.print(data[i]);
+      _serial.print(" ");
+    }
+    _serial.println();
     _serial.println(ModbusRTUClient.lastError());
 
     _inErrorState = true;
@@ -71,9 +83,9 @@ bool ModbusInterface::writeHoldingRegisterValues(int address, int startingRegist
 /**
   Write a single Holding Register value to the server under specified address.
 */
-bool ModbusInterface::writeHoldingRegisterValue(int address, int registerAddress, uint8_t dataByte) {
-  uint8_t dataArray[1];
-  dataArray[0] = dataByte;
+bool ModbusInterface::writeHoldingRegisterValue(int address, int registerAddress, uint16_t data) {
+  uint16_t dataArray[1];
+  dataArray[0] = data;
 
   return writeHoldingRegisterValues(address, registerAddress, dataArray, 1);
 }
@@ -83,7 +95,7 @@ bool ModbusInterface::writeHoldingRegisterValue(int address, int registerAddress
 /**
   Reads Holding Register values from the server under specified address.
 */
-bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegisterAddress, int nValues, uint8_t *response) {
+bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegisterAddress, int nValues, uint16_t *response) {
     _serial.print("Reading Holding Register values ... ");
 
     // NB: we are decrementing the starting register address by 1 here
@@ -101,10 +113,10 @@ bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegiste
       _inErrorState = false;
 
       // Process the response message
-      int value = 0;
+      uint16_t value = 0;
       int responseIndex = 0;
       while (ModbusRTUClient.available()) {
-        value = ModbusRTUClient.read();
+        value = ModbusRTUClient.read(); // @todo: FIX THIS function definition says this returns a long (32 bits), storing in an int (16 bits) and ultimately putting the value into a uint8_t (8 bits) array
         
         // only put a value in the response array if it it is less than the expected number of values
         if (responseIndex < nValues) {
@@ -122,6 +134,6 @@ bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegiste
 /**
   Read the Holding Register value at a given register from the server at a specified address.
 */
-bool ModbusInterface::readHoldingRegisterValue(int address, int registerAddress, uint8_t *response) {
+bool ModbusInterface::readHoldingRegisterValue(int address, int registerAddress, uint16_t *response) {
   return readHoldingRegisterValues(address, registerAddress, 1, response);
 }
