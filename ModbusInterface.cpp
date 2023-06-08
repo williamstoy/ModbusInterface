@@ -61,7 +61,8 @@ bool ModbusInterface::writeHoldingRegisterValues(int address, int startingRegist
       _serial.print(dataLength);
       _serial.print(", data: "); 
       for (int i = 0; i < dataLength; i++) {
-        _serial.print(data[i]);
+        _serial.print("0x");
+        _serial.print(data[i], HEX);
         _serial.print(" ");
       }
       _serial.println();
