@@ -7,9 +7,10 @@
   class ModbusInterface {
     private:
       HardwareSerial& _serial; // Use a reference here, not a value
-      bool _verbose;
+      bool  _verbose;
       float _bitduration, _wordlen, _preDelayBR, _postDelayBR;
-      bool _inErrorState;
+      bool  _inErrorState;
+      int   _RS485config;
     public:
             ModbusInterface(HardwareSerial& serial, bool verbose);
       void  begin(int RS485baudrate, int RS485config);
@@ -17,5 +18,6 @@
       bool  writeHoldingRegisterValue(int address, int registerAddress, uint16_t dataByte);
       bool  readHoldingRegisterValues(int address, int startingRegisterAddress, int nValues, uint16_t *response);
       bool  readHoldingRegisterValue(int address, int registerAddress, uint16_t *response);
+      int   getRS485config();
   };
 #endif

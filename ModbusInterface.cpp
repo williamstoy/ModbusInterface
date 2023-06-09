@@ -13,10 +13,12 @@ ModbusInterface::ModbusInterface(HardwareSerial& serial, bool verbose)
 
 void ModbusInterface::begin(int RS485baudrate, int RS485config) {
   // Calculate preDelay and postDelay in microseconds for stable RS-485 transmission
-  _bitduration = 1.f / RS485baudrate;
-  _wordlen = 10.0f;  // OR 10.0f depending on the channel configuration
-  _preDelayBR = _bitduration * _wordlen * 3.5f * 1e6;
-  _postDelayBR = _bitduration * _wordlen * 3.5f * 1e6;
+  _bitduration  = 1.f / RS485baudrate;
+  _wordlen      = 10.0f;  // OR 10.0f depending on the channel configuration
+  _preDelayBR   = _bitduration * _wordlen * 3.5f * 1e6;
+  _postDelayBR  = _bitduration * _wordlen * 3.5f * 1e6;
+
+  _RS485config = RS485config;
 
   // Start the Modbus RTU client
   RS485.setDelays(_preDelayBR, _postDelayBR);
@@ -138,4 +140,10 @@ bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegiste
 */
 bool ModbusInterface::readHoldingRegisterValue(int address, int registerAddress, uint16_t *response) {
   return readHoldingRegisterValues(address, registerAddress, 1, response);
+}
+
+
+
+int ModbusInterface::getRS485config() {
+  return _RS485config;
 }
