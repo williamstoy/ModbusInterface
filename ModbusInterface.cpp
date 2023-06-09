@@ -4,13 +4,22 @@
 
 #include <ModbusInterface.h>
 
-// constructor
+
+
+/// @brief Construct a new Modbus Interface object.
+/// @param serial handle to the serial object to use for communication
+/// @param verbose whether or not to print verbose output to the serial monitor
 ModbusInterface::ModbusInterface(HardwareSerial& serial, bool verbose)
 : _verbose(verbose), _serial(serial)
 {
   _inErrorState = false;
 }
 
+
+
+/// @brief Start the Modbus RTU client.
+/// @param RS485baudrate the baudrate of the RS-485 bus
+/// @param RS485config the configuration of the RS-485 bus
 void ModbusInterface::begin(int RS485baudrate, int RS485config) {
   // Calculate preDelay and postDelay in microseconds for stable RS-485 transmission
   _bitduration  = 1.f / RS485baudrate;
@@ -38,9 +47,12 @@ void ModbusInterface::begin(int RS485baudrate, int RS485config) {
 
 
 
-/**
-  Writes Holding Register values to the server under specified address.
-*/
+/// @brief Write Holding Register values to the server device.
+/// @param address the Modbus address of the server device
+/// @param startingRegisterAddress the address of the first register to write to
+/// @param data the data to write to the registers
+/// @param dataLength the number of registers to write to
+/// @return true if the write was successful, false otherwise
 bool ModbusInterface::writeHoldingRegisterValues(int address, int startingRegisterAddress, uint16_t *data, int dataLength) {
   // Set the Holding Register values to counter
   if (_verbose) _serial.print("Writing Holding Registers values ... ");
@@ -85,9 +97,11 @@ bool ModbusInterface::writeHoldingRegisterValues(int address, int startingRegist
 
 
 
-/**
-  Write a single Holding Register value to the server under specified address.
-*/
+/// @brief Write a single Holding Register value to the server device.
+/// @param address the Modbus address of the server device
+/// @param registerAddress the address of the register to write to
+/// @param data the data to write to the register
+/// @return true if the write was successful, false otherwise
 bool ModbusInterface::writeHoldingRegisterValue(int address, int registerAddress, uint16_t data) {
   uint16_t dataArray[1] = { data };
 
@@ -96,9 +110,12 @@ bool ModbusInterface::writeHoldingRegisterValue(int address, int registerAddress
 
 
 
-/**
-  Reads Holding Register values from the server under specified address.
-*/
+/// @brief Read Holding Register values from the server device.
+/// @param address the Modbus address of the server device
+/// @param startingRegisterAddress the address of the first register to read from
+/// @param nValues the number of values to read
+/// @param response the array to store the response in
+/// @return true if the read was successful, false otherwise
 bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegisterAddress, int nValues, uint16_t *response) {
     if (_verbose) _serial.print("Reading Holding Register values ... ");
 
@@ -122,7 +139,7 @@ bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegiste
       while (ModbusRTUClient.available()) {
         value = ModbusRTUClient.read(); 
 
-        // only put a value in the response array if it it is less than the expected number of values
+        // only put a value in the response array if the index is less than the expected number of values
         if (responseIndex < nValues) {
           response[responseIndex] = value;
           responseIndex++;
@@ -135,15 +152,19 @@ bool ModbusInterface::readHoldingRegisterValues(int address, int startingRegiste
 
 
 
-/**
-  Read the Holding Register value at a given register from the server at a specified address.
-*/
+/// @brief Read a single Holding Register value from the server device.
+/// @param address the Modbus address of the server device
+/// @param registerAddress the address of the register to read from
+/// @param response the array to store the response in
+/// @return true if the read was successful, false otherwise
 bool ModbusInterface::readHoldingRegisterValue(int address, int registerAddress, uint16_t *response) {
   return readHoldingRegisterValues(address, registerAddress, 1, response);
 }
 
 
 
+/// @brief Get the RS-485 configuration of the Modbus interface.
+/// @return the configuration integer value
 int ModbusInterface::getRS485config() {
   return _RS485config;
 }
