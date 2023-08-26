@@ -23,7 +23,7 @@ ModbusInterface::ModbusInterface(HardwareSerial& serial, bool verbose)
 void ModbusInterface::begin(int RS485baudrate, int RS485config) {
   // Calculate preDelay and postDelay in microseconds for stable RS-485 transmission
   _bitduration  = 1.f / RS485baudrate;
-  _wordlen      = 10.0f;  // OR 10.0f depending on the channel configuration
+  _wordlen      = 9.6f;  // 9.6f OR 10.0f depending on the channel configuration
   _preDelayBR   = _bitduration * _wordlen * 3.5f * 1e6;
   _postDelayBR  = _bitduration * _wordlen * 3.5f * 1e6;
 
